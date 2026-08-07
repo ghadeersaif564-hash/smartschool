@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الرقمية للمدرسة 🎈</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر: يحتوي على الشعار واسم المدرسة والأزرار -->
+    <header>
+        <div class="school-header">
+            <!-- ضع اسم صورة الشعار هنا (مثلاً: logo.png) -->
+            <img src="logo.png" alt="شعار المدرسة" class="school-logo">
+            <h1 class="school-name">مدرسة [اكتب اسم المدرسة هنا]</h1>
+        </div>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" onclick="showSection('books', this)">📚 قسم الكتب والقصص</button>
+            <button class="nav-btn" onclick="showSection('videos', this)">🎥 قسم الفيديوهات</button>
+            <button class="nav-btn" onclick="showSection('events', this)">🎨 معرض الفعاليات</button>
+        </nav>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="container">
+
+        <!-- 1. قسم الكتب -->
+        <section id="books" class="page-section active">
+            <h2 class="section-title">📚 مكتبة الأطفال الرقمية</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">📖</div>
+                    <h3>قصة الحروف الهجائية</h3>
+                    <p>كتاب ملون وممتع لتعليم الأطفال الحروف والكلمات.</p>
+                    <a href="sample.pdf" target="_blank" class="btn">قراءة / تحميل 📥</a>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✏️</div>
+                    <h3>كراسة الأنشطة والتلوين</h3>
+                    <p>أنشطة تفاعلية وممتعة لتنمية مهارات الطفل.</p>
+                    <a href="sample.pdf" target="_blank" class="btn">قراءة / تحميل 📥</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. قسم الفيديوهات -->
+        <section id="videos" class="page-section">
+            <h2 class="section-title">🎥 سينما الأطفال والمرح</h2>
+            <div class="grid">
+                <div class="card video-card">
+                    <h3>فيديو تعليمي ممتع</h3>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. قسم الفعاليات -->
+        <section id="events" class="page-section">
+            <h2 class="section-title">🎨 معرض فعاليات وأنشطة المدرسة</h2>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://via.placeholder.com/300x180" alt="فعالية الرسم" class="event-img">
+                    <h3>يوم الرسم والألوان</h3>
+                    <p>جانب من مشاركة الطلاب المبدعين في معرض الفنون.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>جميع الحقوق محفوظة للمدرسة © 2026</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
