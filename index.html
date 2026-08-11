@@ -18,7 +18,7 @@
 
         <nav class="main-nav">
             <button class="nav-btn active" onclick="showSection('books', this)">📚 قسم الكتب والقصص</button>
-            <button class="nav-btn" onclick="showSection('videos', this)">🎥 قسم الفيديوهات</button>
+            <button class="nav-btn" onclick="showSection('videos', this)">🧩 لعبة البزل</button>
             <button class="nav-btn" onclick="showSection('events', this)">🎨 أرسم و لون</button>
         </nav>
     </header>
@@ -84,18 +84,19 @@
         </section>
 
 
-        <!-- 🎥 قسم الفيديوهات -->
-        <section id="videos" class="page-section">
-            <h2 class="section-title">🎥 سينما الأطفال والمرح</h2>
-            <div class="grid">
-                <div class="card video-card">
-                    <h3>فيديو تعليمي ممتع</h3>
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- 🧩 قسم لعبة البزل -->
+<section id="puzzle" class="page-section">
+    <h2 class="section-title">🧩 لعبة تركيب الصور (البزل)</h2>
+    
+    <div style="background: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; text-align: center;">
+        <p style="font-size: 1.1rem; color: #555;">اضغط على القطع المجاورة للمربع الفارغ لترتيب الأرقام والصورة بالشكل الصحيح! 🎯</p>
+        
+        <!-- شبكة لعبة البزل -->
+        <div id="puzzle-board" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 300px; height: 300px; margin: 20px auto; background: #eee; border: 4px solid #4CAF50; border-radius: 10px; padding: 5px;"></div>
+        
+        <button onclick="initPuzzle()" class="btn" style="background-color: #ff9800; margin-top: 10px;">🔄 إعادة اللعب / خلط القطع</button>
+    </div>
+</section>
 
         <!-- 🎨 قسم الفعاليات والأنشطة والتلوين -->
 <section id="events" class="page-section">
