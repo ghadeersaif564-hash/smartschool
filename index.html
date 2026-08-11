@@ -97,17 +97,32 @@
             </div>
         </section>
 
-        <!-- 🎨 قسم الفعاليات -->
-        <section id="events" class="page-section">
-            <h2 class="section-title">🎨 معرض فعاليات وأنشطة المدرسة</h2>
-            <div class="grid">
-                <div class="card">
-                    <img src="https://via.placeholder.com/300x180" alt="فعالية الرسم" class="event-img">
-                    <h3>يوم الرسم والألوان</h3>
-                    <p>جانب من مشاركة الطلاب المبدعين في معرض الفنون.</p>
-                </div>
-            </div>
-        </section>
+        <!-- 🎨 قسم الفعاليات والأنشطة والتلوين -->
+<section id="events" class="page-section">
+    <h2 class="section-title">🎨 مرسم الأطفال والتلوين التفاعلي</h2>
+    
+    <div style="background: #ffffff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; text-align: center;">
+        <h3>لون وارسم لوحتك الخاصة 🖌️</h3>
+        
+        <!-- أداة التحكم بالألوان والحجم -->
+        <div style="margin: 15px 0; display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <label>اختر اللون: <input type="color" id="colorPicker" value="#ff0000"></label>
+            <label>حجم الفرشاة: 
+                <select id="brushSize">
+                    <option value="5">صغير ✏️</option>
+                    <option value="10" selected>متوسط 🖌️</option>
+                    <option value="20">كبير 🖍️</option>
+                </select>
+            </label>
+            <button onclick="useEraser()" class="btn" style="background-color: #ff9800; padding: 5px 10px;">🧹 ممحاة</button>
+            <button onclick="usePencil()" class="btn" style="background-color: #2196F3; padding: 5px 10px;">✏️ قلم</button>
+            <button onclick="clearCanvas()" class="btn" style="background-color: #f44336; padding: 5px 10px;">🗑️ مسح الكل</button>
+        </div>
+
+        <!-- لوحة الرسم -->
+        <canvas id="paintCanvas" width="500" height="350" style="border: 3px dashed #ff6f61; border-radius: 10px; cursor: crosshair; background-color: #ffffff; max-width: 100%;"></canvas>
+    </div>
+</section>
 
     </main>
 
