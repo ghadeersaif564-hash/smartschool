@@ -16,11 +16,11 @@
             <h1 class="school-name">مدرسة [االطالب الذكي فرع العامرات]</h1>
         </div>
 
-        <nav class="main-nav">
-            <button class="nav-btn active" onclick="showSection('books', this)">📚 قسم الكتب والقصص</button>
-            <button class="nav-btn" onclick="showSection('videos', this)">🧩 لعبة البزل</button>
-            <button class="nav-btn" onclick="showSection('events', this)">🎨 أرسم و لون</button>
-        </nav>
+       <nav class="main-nav">
+    <button class="nav-btn active" onclick="showSection('books', this)">📚 قسم الكتب والقصص</button>
+    <button class="nav-btn" onclick="showSection('puzzle', this); initPuzzle();">🧩 لعبة البزل</button>
+    <button class="nav-btn" onclick="showSection('events', this); setTimeout(initCanvas, 100);">🎨 مرسم الأطفال</button>
+</nav>
     </header>
 
     <!-- المحتوى الرئيسي -->
