@@ -1,95 +1,24 @@
+// ==========================================
+// 1️⃣ التنقل بين الأقسام (الكتب، البزل، المرسم)
+// ==========================================
 function showSection(sectionId, element) {
-    // إخفاء كافة الأقسام
     const sections = document.querySelectorAll('.page-section');
-    sections.forEach(section => {
-        section.classList.remove('active');
-    });
+    sections.forEach(sec => sec.classList.remove('active'));
 
-    // إزالة اللون النشط من كافة الأزرار
     const buttons = document.querySelectorAll('.nav-btn');
-    buttons.forEach(btn => {
-        btn.classList.remove('active');
-    });
+    buttons.forEach(btn => btn.classList.remove('active'));
 
-    // إظهار القسم المختار وتفعيل زره
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.add('active');
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) {
+        activeSection.classList.add('active');
     }
-
     if (element) {
         element.classList.add('active');
     }
 }
+
 // ==========================================
-// 🎨 كود لوحة التلوين والممحاة التفاعلية
-// ==========================================
-const canvas = document.getElementById('paintCanvas');
-if (canvas) {
-    const ctx = canvas.getContext('2d');
-    let painting = false;
-    let currentColor = '#ff0000';
-    let isEraser = false;
-
-    function startPosition(e) {
-        painting = true;
-        draw(e);
-    }
-
-    function finishedPosition() {
-        painting = false;
-        ctx.beginPath();
-    }
-
-    function draw(e) {
-        if (!painting) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
-
-        ctx.lineWidth = document.getElementById('brushSize').value;
-        ctx.lineCap = 'round';
-
-        if (isEraser) {
-            ctx.strokeStyle = '#ffffff'; // إرجاع اللون للأبيض لعمل الممحاة
-        } else {
-            ctx.strokeStyle = document.getElementById('colorPicker').value;
-        }
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
-
-    // أحداث الماوس واللمس للهواتف
-    canvas.addEventListener('mousedown', startPosition);
-    canvas.addEventListener('mouseup', finishedPosition);
-    canvas.addEventListener('mousemove', draw);
-
-    canvas.addEventListener('touchstart', startPosition);
-    canvas.addEventListener('touchend', finishedPosition);
-    canvas.addEventListener('touchmove', draw);
-}
-
-function useEraser() {
-    isEraser = true;
-}
-
-function usePencil() {
-    isEraser = false;
-}
-
-function clearCanvas() {
-    const canvas = document.getElementById('paintCanvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // ==========================================
-// 🧩 كود لعبة البزل التفاعلية للأطفال
+// 2️⃣ كود تشغيل لعبة البزل التفاعلية 🧩
 // ==========================================
 let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
 
@@ -129,9 +58,7 @@ function moveTile(index) {
         index - 3, index + 3  // أعلى وأسفل
     ];
 
-    // التأكد من أن الحركة مجاورة للمربع الفارغ
     if (validMoves.includes(emptyIndex)) {
-        // منع التبديل عبر الصفوف في الأطراف
         if ((index % 3 === 0 && emptyIndex === index - 1) || (index % 3 === 2 && emptyIndex === index + 1)) return;
 
         tiles[emptyIndex] = tiles[index];
@@ -142,7 +69,6 @@ function moveTile(index) {
 }
 
 function initPuzzle() {
-    // خلط القطع عشوائياً
     tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
     renderPuzzle();
 }
@@ -153,8 +79,82 @@ function checkWin() {
     }
 }
 
-// تشغيل اللعبة تلقائياً عند فتح الصفحة
+// ==========================================
+// 3️⃣ كود لوحة الرسم والمرسم التفاعلي 🎨
+// ==========================================
+let isEraser = false;
+
+function initCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let painting = false;
+
+    function startPosition(e) {
+        painting = true;
+        draw(e);
+    }
+
+    function finishedPosition() {
+        painting = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!painting) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+
+        const brushSize = document.getElementById('brushSize') ? document.getElementById('brushSize').value : 10;
+        const colorPicker = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#ff0000';
+
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+
+        if (isEraser) {
+            ctx.strokeStyle = '#ffffff';
+        } else {
+            ctx.strokeStyle = colorPicker;
+        }
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', finishedPosition);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', startPosition);
+    canvas.addEventListener('touchend', finishedPosition);
+    canvas.addEventListener('touchmove', draw);
+}
+
+function useEraser() {
+    isEraser = true;
+}
+
+function usePencil() {
+    isEraser = false;
+}
+
+function clearCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// ==========================================
+// 4️⃣ تشغيل كل الأكواب تلقائياً عند فتح الموقع
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     initPuzzle();
+    initCanvas();
 });
-}
