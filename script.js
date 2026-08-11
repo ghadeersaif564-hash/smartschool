@@ -1,6 +1,10 @@
 // ==========================================
-// 1️⃣ التنقل بين الأقسام (الكتب، البزل، المرسم)
+// 1️⃣ متغيرات ومتطلبات لعبة البزل (Puzzle)
 // ==========================================
+let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+let currentPuzzleImage = 'puzzle1.jpg'; // الصورة الافتراضية الأولى
+
+// التنقل بين أقسام الموقع (الكتب، البزل، المرسم)
 function showSection(sectionId, element) {
     const sections = document.querySelectorAll('.page-section');
     sections.forEach(sec => sec.classList.remove('active'));
@@ -17,11 +21,13 @@ function showSection(sectionId, element) {
     }
 }
 
-// ==========================================
-// 2️⃣ كود تشغيل لعبة البزل التفاعلية 🧩
-// ==========================================
-let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+// تغيير صورة البزل عند ضغط الطفل على الأزرار
+function changePuzzleImage(newImage) {
+    currentPuzzleImage = newImage;
+    initPuzzle();
+}
 
+// رسم ورصف قطع البزل بالصورة المختارة
 function renderPuzzle() {
     const board = document.getElementById('puzzle-board');
     if (!board) return;
@@ -29,28 +35,30 @@ function renderPuzzle() {
     
     tiles.forEach((tile, index) => {
         const tileDiv = document.createElement('div');
-        tileDiv.style.display = 'flex';
-        tileDiv.style.alignItems = 'center';
-        tileDiv.style.justifyContent = 'center';
-        tileDiv.style.fontSize = '1.8rem';
-        tileDiv.style.fontWeight = 'bold';
         tileDiv.style.borderRadius = '8px';
         tileDiv.style.cursor = tile !== "" ? 'pointer' : 'default';
         tileDiv.style.userSelect = 'none';
+        tileDiv.style.boxShadow = tile !== "" ? '0 2px 5px rgba(0,0,0,0.2)' : 'none';
 
         if (tile === "") {
             tileDiv.style.background = 'transparent';
         } else {
-            tileDiv.style.background = '#ff6f61';
-            tileDiv.style.color = '#fff';
-            tileDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-            tileDiv.innerText = tile;
+            const originalIndex = tile - 1;
+            const row = Math.floor(originalIndex / 3);
+            const col = originalIndex % 3;
+
+            // إظهار جزء من الصورة المحددة
+            tileDiv.style.backgroundImage = `url('${currentPuzzleImage}')`;
+            tileDiv.style.backgroundSize = '300px 300px';
+            tileDiv.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+            
             tileDiv.onclick = () => moveTile(index);
         }
         board.appendChild(tileDiv);
     });
 }
 
+// حركة قطعة البزل عند الضغط عليها
 function moveTile(index) {
     const emptyIndex = tiles.indexOf("");
     const validMoves = [
@@ -68,19 +76,22 @@ function moveTile(index) {
     }
 }
 
+// خلط البزل لبدء اللعبة
 function initPuzzle() {
     tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
     renderPuzzle();
 }
 
+// رسالة الفوز عند إكمال البزل
 function checkWin() {
     if (tiles.join(',') === "1,2,3,4,5,6,7,8,") {
         setTimeout(() => alert("🎉 كفوو! أحسنت، لقد حللت البزل بنجاح! 🏆"), 200);
     }
 }
 
+
 // ==========================================
-// 3️⃣ كود لوحة الرسم والمرسم التفاعلي 🎨
+// 2️⃣ كود مرسم الأطفال والتلوين (Canvas)
 // ==========================================
 let isEraser = false;
 
@@ -115,7 +126,7 @@ function initCanvas() {
         ctx.lineCap = 'round';
 
         if (isEraser) {
-            ctx.strokeStyle = '#ffffff';
+            ctx.strokeStyle = '#ffffff'; // الممحاة ترسم باللون الأبيض
         } else {
             ctx.strokeStyle = colorPicker;
         }
@@ -126,6 +137,7 @@ function initCanvas() {
         ctx.moveTo(x, y);
     }
 
+    // دعم الماوس واللمس للهواتف والأيباد
     canvas.addEventListener('mousedown', startPosition);
     canvas.addEventListener('mouseup', finishedPosition);
     canvas.addEventListener('mousemove', draw);
@@ -151,8 +163,9 @@ function clearCanvas() {
     }
 }
 
+
 // ==========================================
-// 4️⃣ تشغيل كل الأكواب تلقائياً عند فتح الموقع
+// 3️⃣ تشغيل كل الألعاب والوظائف تلقائياً
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     initPuzzle();
