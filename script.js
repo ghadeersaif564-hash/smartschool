@@ -1,33 +1,44 @@
 // ==========================================
-// 1️⃣ متغيرات ومتطلبات لعبة البزل (Puzzle)
+// 1️⃣ التنقل بين الأقسام
 // ==========================================
-let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
-let currentPuzzleImage = 'puzzle1.jpg'; // الصورة الافتراضية الأولى
-
-// التنقل بين أقسام الموقع (الكتب، البزل، المرسم)
 function showSection(sectionId, element) {
     const sections = document.querySelectorAll('.page-section');
-    sections.forEach(sec => sec.classList.remove('active'));
+    sections.forEach(sec => {
+        sec.style.display = 'none';
+        sec.classList.remove('active');
+    });
 
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
 
     const activeSection = document.getElementById(sectionId);
     if (activeSection) {
+        activeSection.style.display = 'block';
         activeSection.classList.add('active');
     }
     if (element) {
         element.classList.add('active');
     }
+
+    // إعادة تشغيل اللعبة والمرسم عند فتح الأقسام الخاصة بهما
+    if (sectionId === 'puzzle') {
+        initPuzzle();
+    } else if (sectionId === 'events') {
+        setTimeout(initCanvas, 50);
+    }
 }
 
-// تغيير صورة البزل عند ضغط الطفل على الأزرار
+// ==========================================
+// 2️⃣ كود لعبة البزل (Puzzle)
+// ==========================================
+let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+let currentPuzzleImage = 'puzzle1.jpg';
+
 function changePuzzleImage(newImage) {
     currentPuzzleImage = newImage;
     initPuzzle();
 }
 
-// رسم ورصف قطع البزل بالصورة المختارة
 function renderPuzzle() {
     const board = document.getElementById('puzzle-board');
     if (!board) return;
@@ -47,10 +58,10 @@ function renderPuzzle() {
             const row = Math.floor(originalIndex / 3);
             const col = originalIndex % 3;
 
-            // إظهار جزء من الصورة المحددة
             tileDiv.style.backgroundImage = `url('${currentPuzzleImage}')`;
             tileDiv.style.backgroundSize = '300px 300px';
             tileDiv.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+            tileDiv.style.backgroundColor = '#ff6f61'; // لون احتياطي لو لم ترفع الصورة بعد
             
             tileDiv.onclick = () => moveTile(index);
         }
@@ -58,13 +69,9 @@ function renderPuzzle() {
     });
 }
 
-// حركة قطعة البزل عند الضغط عليها
 function moveTile(index) {
     const emptyIndex = tiles.indexOf("");
-    const validMoves = [
-        index - 1, index + 1, // يسار ويمين
-        index - 3, index + 3  // أعلى وأسفل
-    ];
+    const validMoves = [index - 1, index + 1, index - 3, index + 3];
 
     if (validMoves.includes(emptyIndex)) {
         if ((index % 3 === 0 && emptyIndex === index - 1) || (index % 3 === 2 && emptyIndex === index + 1)) return;
@@ -76,24 +83,22 @@ function moveTile(index) {
     }
 }
 
-// خلط البزل لبدء اللعبة
 function initPuzzle() {
     tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
     renderPuzzle();
 }
 
-// رسالة الفوز عند إكمال البزل
 function checkWin() {
     if (tiles.join(',') === "1,2,3,4,5,6,7,8,") {
         setTimeout(() => alert("🎉 كفوو! أحسنت، لقد حللت البزل بنجاح! 🏆"), 200);
     }
 }
 
-
 // ==========================================
-// 2️⃣ كود مرسم الأطفال والتلوين (Canvas)
+// 3️⃣ كود مرسم الأطفال والتلوين (Canvas)
 // ==========================================
 let isEraser = false;
+let canvasInitialized = false;
 
 function initCanvas() {
     const canvas = document.getElementById('paintCanvas');
@@ -116,8 +121,11 @@ function initCanvas() {
         if (!painting) return;
 
         const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
 
         const brushSize = document.getElementById('brushSize') ? document.getElementById('brushSize').value : 10;
         const colorPicker = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#ff0000';
@@ -126,7 +134,7 @@ function initCanvas() {
         ctx.lineCap = 'round';
 
         if (isEraser) {
-            ctx.strokeStyle = '#ffffff'; // الممحاة ترسم باللون الأبيض
+            ctx.strokeStyle = '#ffffff';
         } else {
             ctx.strokeStyle = colorPicker;
         }
@@ -137,24 +145,20 @@ function initCanvas() {
         ctx.moveTo(x, y);
     }
 
-    // دعم الماوس واللمس للهواتف والأيباد
-    canvas.addEventListener('mousedown', startPosition);
-    canvas.addEventListener('mouseup', finishedPosition);
-    canvas.addEventListener('mousemove', draw);
+    if (!canvasInitialized) {
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
 
-    canvas.addEventListener('touchstart', startPosition);
-    canvas.addEventListener('touchend', finishedPosition);
-    canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', finishedPosition);
+        canvas.addEventListener('touchmove', draw);
+        canvasInitialized = true;
+    }
 }
 
-function useEraser() {
-    isEraser = true;
-}
-
-function usePencil() {
-    isEraser = false;
-}
-
+function useEraser() { isEraser = true; }
+function usePencil() { isEraser = false; }
 function clearCanvas() {
     const canvas = document.getElementById('paintCanvas');
     if (canvas) {
@@ -163,11 +167,7 @@ function clearCanvas() {
     }
 }
 
-
-// ==========================================
-// 3️⃣ تشغيل كل الألعاب والوظائف تلقائياً
-// ==========================================
+// تشغيل عند التحميل الأول
 document.addEventListener("DOMContentLoaded", () => {
     initPuzzle();
-    initCanvas();
 });
