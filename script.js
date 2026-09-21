@@ -3,10 +3,7 @@
 // ==========================================
 function showSection(sectionId, element) {
     const sections = document.querySelectorAll('.page-section');
-    sections.forEach(sec => {
-        sec.style.display = 'none';
-        sec.classList.remove('active');
-    });
+    sections.forEach(sec => sec.style.display = 'none');
 
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -14,7 +11,6 @@ function showSection(sectionId, element) {
     const activeSection = document.getElementById(sectionId);
     if (activeSection) {
         activeSection.style.display = 'block';
-        activeSection.classList.add('active');
     }
     if (element) {
         element.classList.add('active');
@@ -22,18 +18,16 @@ function showSection(sectionId, element) {
 
     if (sectionId === 'arabic') {
         initArabicAlphabet();
-    } else if (sectionId === 'puzzle') {
-        initPuzzle();
-    } else if (sectionId === 'events') {
-        setTimeout(initCanvas, 50);
     } else if (sectionId === 'math') {
         generateMathQuiz();
         generateMultiplicationTable();
+    } else if (sectionId === 'puzzle') {
+        initPuzzle();
     }
 }
 
 // ==========================================
-// 2️⃣ كود الحروف العربية 🔤
+// 2️⃣ الحروف العربية
 // ==========================================
 const alphabetData = [
     { letter: 'أ', word: 'أ : أسد 🦁' }, { letter: 'ب', word: 'ب : بطة 🦆' },
@@ -54,13 +48,14 @@ const alphabetData = [
 
 function initArabicAlphabet() {
     const container = document.getElementById('alphabetContainer');
-    if (!container || container.innerHTML !== "") return;
+    if (!container) return;
+    container.innerHTML = "";
 
     alphabetData.forEach(item => {
         const btn = document.createElement('button');
         btn.className = 'letter-btn';
         btn.innerText = item.letter;
-        btn.onclick = () => {
+        btn.onclick = function() {
             document.getElementById('selectedLetter').innerText = item.letter;
             document.getElementById('letterWord').innerText = item.word;
         };
@@ -69,70 +64,112 @@ function initArabicAlphabet() {
 }
 
 // ==========================================
-// 3️⃣ كود لعبة توصيل الأرقام 🔢
+// 3️⃣ توصيل الأرقام
 // ==========================================
-let selectedNumber = null;
-let selectedShape = null;
+let matchNum = null;
+let matchShape = null;
 
-function selectMatch(type, value, element) {
-    if (element.classList.contains('matched')) return;
+function handleMatchClick(type, val, elem) {
+    if (elem.classList.contains('matched')) return;
 
     if (type === 'num') {
-        document.querySelectorAll('#numbersColumn .match-item').forEach(el => el.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedNumber = { val: value, elem: element };
+        document.querySelectorAll('#numbersColumn .match-item').forEach(e => e.classList.remove('selected'));
+        elem.classList.add('selected');
+        matchNum = { val: val, elem: elem };
     } else {
-        document.querySelectorAll('#shapesColumn .match-item').forEach(el => el.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedShape = { val: value, elem: element };
+        document.querySelectorAll('#shapesColumn .match-item').forEach(e => e.classList.remove('selected'));
+        elem.classList.add('selected');
+        matchShape = { val: val, elem: elem };
     }
 
-    if (selectedNumber && selectedShape) {
-        if (selectedNumber.val === selectedShape.val) {
-            selectedNumber.elem.classList.remove('selected');
-            selectedShape.elem.classList.remove('selected');
-            selectedNumber.elem.classList.add('matched');
-            selectedShape.elem.classList.add('matched');
-            selectedNumber = null;
-            selectedShape = null;
-            checkMatchingWin();
+    if (matchNum && matchShape) {
+        if (matchNum.val === matchShape.val) {
+            matchNum.elem.classList.remove('selected');
+            matchShape.elem.classList.remove('selected');
+            matchNum.elem.classList.add('matched');
+            matchShape.elem.classList.add('matched');
+            matchNum = null;
+            matchShape = null;
+
+            const totalMatched = document.querySelectorAll('.match-item.matched').length;
+            if (totalMatched === 8) {
+                setTimeout(() => alert('🎉 ممتاااز! تم توصيل جميع الأرقام بنجاح 🏆'), 200);
+            }
         } else {
             setTimeout(() => {
-                if (selectedNumber) selectedNumber.elem.classList.remove('selected');
-                if (selectedShape) selectedShape.elem.classList.remove('selected');
-                selectedNumber = null;
-                selectedShape = null;
-                alert('❌ إجابة غير صحيحة، حاول مرة أخرى!');
-            }, 300);
+                if (matchNum) matchNum.elem.classList.remove('selected');
+                if (matchShape) matchShape.elem.classList.remove('selected');
+                matchNum = null;
+                matchShape = null;
+                alert('❌ إجابة خاطئة، حاول مرة أخرى!');
+            }, 250);
         }
     }
 }
 
-function checkMatchingWin() {
-    const totalMatched = document.querySelectorAll('.match-item.matched').length;
-    if (totalMatched === 8) {
-        setTimeout(() => alert('🎉 أحسنت يا بطل! لقد وصلت جميع الأرقام بالكامل 🏆'), 200);
+function resetMatchingGame() {
+    document.querySelectorAll('.match-item').forEach(e => {
+        e.classList.remove('selected', 'matched');
+    });
+    matchNum = null;
+    matchShape = null;
+}
+
+// ==========================================
+// 4️⃣ جدول الضرب والإختبار
+// ==========================================
+let currentNum1 = 0, currentNum2 = 0, score = 0;
+
+function generateMathQuiz() {
+    currentNum1 = Math.floor(Math.random() * 9) + 2;
+    currentNum2 = Math.floor(Math.random() * 9) + 1;
+    document.getElementById('quizQuestion').innerText = `كم يساوي ${currentNum1} × ${currentNum2} ؟`;
+    document.getElementById('quizAnswer').value = '';
+}
+
+function checkMathAnswer() {
+    const inputVal = parseInt(document.getElementById('quizAnswer').value);
+    const feedback = document.getElementById('quizFeedback');
+    const correctVal = currentNum1 * currentNum2;
+
+    if (inputVal === correctVal) {
+        feedback.style.color = '#4CAF50';
+        feedback.innerText = '🎉 إجابة صحيحة! بطل 🌟';
+        score += 10;
+        document.getElementById('scoreDisplay').innerText = score;
+        setTimeout(() => {
+            feedback.innerText = '';
+            generateMathQuiz();
+        }, 1200);
+    } else {
+        feedback.style.color = '#f44336';
+        feedback.innerText = `❌ إجابة خاطئة! الناتج الصحيح هو ${correctVal}`;
     }
 }
 
-function resetMatchingGame() {
-    document.querySelectorAll('.match-item').forEach(el => {
-        el.classList.remove('selected', 'matched');
-    });
-    selectedNumber = null;
-    selectedShape = null;
+function generateMultiplicationTable() {
+    const table = document.getElementById('multiplicationTable');
+    if (!table || table.innerHTML.trim() !== "") return;
+
+    let html = '<tr style="background: #2196F3; color: white;"><th>×</th>';
+    for (let i = 1; i <= 10; i++) html += `<th style="padding: 5px;">${i}</th>`;
+    html += '</tr>';
+
+    for (let i = 1; i <= 10; i++) {
+        html += `<tr><th style="background: #2196F3; color: white; padding: 5px;">${i}</th>`;
+        for (let j = 1; j <= 10; j++) {
+            const bg = (i * j) % 2 === 0 ? '#f9f9f9' : '#ffffff';
+            html += `<td style="padding: 5px; border: 1px solid #ddd; background: ${bg};">${i * j}</td>`;
+        }
+        html += '</tr>';
+    }
+    table.innerHTML = html;
 }
 
 // ==========================================
-// 4️⃣ كود لعبة البزل (Puzzle)
+// 5️⃣ البزل
 // ==========================================
 let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
-let currentPuzzleImage = 'puzzle1.jpg';
-
-function changePuzzleImage(newImage) {
-    currentPuzzleImage = newImage;
-    initPuzzle();
-}
 
 function renderPuzzle() {
     const board = document.getElementById('puzzle-board');
@@ -141,23 +178,19 @@ function renderPuzzle() {
     
     tiles.forEach((tile, index) => {
         const tileDiv = document.createElement('div');
-        tileDiv.style.borderRadius = '8px';
-        tileDiv.style.cursor = tile !== "" ? 'pointer' : 'default';
-        tileDiv.style.userSelect = 'none';
-        tileDiv.style.boxShadow = tile !== "" ? '0 2px 5px rgba(0,0,0,0.2)' : 'none';
+        tileDiv.style.borderRadius = '6px';
+        tileDiv.style.display = 'flex';
+        tileDiv.style.alignItems = 'center';
+        tileDiv.style.justifyContent = 'center';
+        tileDiv.style.fontSize = '1.5rem';
+        tileDiv.style.fontWeight = 'bold';
+        tileDiv.style.color = '#fff';
 
         if (tile === "") {
             tileDiv.style.background = 'transparent';
         } else {
-            const originalIndex = tile - 1;
-            const row = Math.floor(originalIndex / 3);
-            const col = originalIndex % 3;
-
-            tileDiv.style.backgroundImage = `url('${currentPuzzleImage}')`;
-            tileDiv.style.backgroundSize = '300px 300px';
-            tileDiv.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
             tileDiv.style.backgroundColor = '#ff6f61';
-            
+            tileDiv.innerText = tile;
             tileDiv.onclick = () => moveTile(index);
         }
         board.appendChild(tileDiv);
@@ -174,7 +207,6 @@ function moveTile(index) {
         tiles[emptyIndex] = tiles[index];
         tiles[index] = "";
         renderPuzzle();
-        checkWin();
     }
 }
 
@@ -183,141 +215,7 @@ function initPuzzle() {
     renderPuzzle();
 }
 
-function checkWin() {
-    if (tiles.join(',') === "1,2,3,4,5,6,7,8,") {
-        setTimeout(() => alert("🎉 كفوو! أحسنت، لقد حللت البزل بنجاح! 🏆"), 200);
-    }
-}
-
-// ==========================================
-// 5️⃣ كود جدول الضرب واختبار الذكاء
-// ==========================================
-let num1 = 0, num2 = 0, currentScore = 0;
-
-function generateMathQuiz() {
-    num1 = Math.floor(Math.random() * 9) + 2;
-    num2 = Math.floor(Math.random() * 9) + 1;
-    const quizElem = document.getElementById('quizQuestion');
-    if (quizElem) {
-        quizElem.innerText = `كم يساوي ${num1} × ${num2} ؟`;
-    }
-    const inputElem = document.getElementById('quizAnswer');
-    if (inputElem) inputElem.value = '';
-}
-
-function checkMathAnswer() {
-    const userAnswer = parseInt(document.getElementById('quizAnswer').value);
-    const feedback = document.getElementById('quizFeedback');
-    const correctAnswer = num1 * num2;
-
-    if (userAnswer === correctAnswer) {
-        feedback.style.color = '#4CAF50';
-        feedback.innerText = '🎉 إجابة صحيحة! بطل الرياضيات 🌟';
-        currentScore += 10;
-        document.getElementById('scoreDisplay').innerText = currentScore;
-        setTimeout(() => {
-            feedback.innerText = '';
-            generateMathQuiz();
-        }, 1500);
-    } else {
-        feedback.style.color = '#f44336';
-        feedback.innerText = `❌ إجابة خاطئة، حاول مرة أخرى! (الإجابة الصحيحة هي ${correctAnswer})`;
-    }
-}
-
-function generateMultiplicationTable() {
-    const table = document.getElementById('multiplicationTable');
-    if (!table || table.innerHTML !== "") return;
-
-    let html = '<tr style="background: #2196F3; color: white;"><th>×</th>';
-    for (let i = 1; i <= 10; i++) html += `<th style="padding: 6px; border: 1px solid #ddd;">${i}</th>`;
-    html += '</tr>';
-
-    for (let i = 1; i <= 10; i++) {
-        html += `<tr><th style="background: #2196F3; color: white; padding: 6px; border: 1px solid #ddd;">${i}</th>`;
-        for (let j = 1; j <= 10; j++) {
-            const bg = (i * j) % 2 === 0 ? '#f9f9f9' : '#ffffff';
-            html += `<td style="padding: 6px; border: 1px solid #ddd; background: ${bg};">${i * j}</td>`;
-        }
-        html += '</tr>';
-    }
-    table.innerHTML = html;
-}
-
-// ==========================================
-// 6️⃣ كود المرسم واللوحة
-// ==========================================
-let isEraser = false;
-let canvasInitialized = false;
-
-function initCanvas() {
-    const canvas = document.getElementById('paintCanvas');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    let painting = false;
-
-    function startPosition(e) {
-        painting = true;
-        draw(e);
-    }
-
-    function finishedPosition() {
-        painting = false;
-        ctx.beginPath();
-    }
-
-    function draw(e) {
-        if (!painting) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-
-        const brushSize = document.getElementById('brushSize') ? document.getElementById('brushSize').value : 10;
-        const colorPicker = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#ff0000';
-
-        ctx.lineWidth = brushSize;
-        ctx.lineCap = 'round';
-
-        if (isEraser) {
-            ctx.strokeStyle = '#ffffff';
-        } else {
-            ctx.strokeStyle = colorPicker;
-        }
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
-
-    if (!canvasInitialized) {
-        canvas.addEventListener('mousedown', startPosition);
-        canvas.addEventListener('mouseup', finishedPosition);
-        canvas.addEventListener('mousemove', draw);
-
-        canvas.addEventListener('touchstart', startPosition);
-        canvas.addEventListener('touchend', finishedPosition);
-        canvas.addEventListener('touchmove', draw);
-        canvasInitialized = true;
-    }
-}
-
-function useEraser() { isEraser = true; }
-function usePencil() { isEraser = false; }
-function clearCanvas() {
-    const canvas = document.getElementById('paintCanvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-}
-
-// التشغيل الأول
+// البدء عند التحميل
 document.addEventListener("DOMContentLoaded", () => {
-    initPuzzle();
+    initArabicAlphabet();
 });
