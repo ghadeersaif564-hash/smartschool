@@ -23,6 +23,8 @@ function showSection(sectionId, element) {
         generateMultiplicationTable();
     } else if (sectionId === 'puzzle') {
         initPuzzle();
+    } else if (sectionId === 'events') {
+        setTimeout(initCanvas, 50);
     }
 }
 
@@ -64,7 +66,7 @@ function initArabicAlphabet() {
 }
 
 // ==========================================
-// 3️⃣ توصيل الأرقام
+// 3️⃣ توصيل الأرقام (تفاعلي كامل)
 // ==========================================
 let matchNum = null;
 let matchShape = null;
@@ -93,16 +95,18 @@ function handleMatchClick(type, val, elem) {
 
             const totalMatched = document.querySelectorAll('.match-item.matched').length;
             if (totalMatched === 8) {
-                setTimeout(() => alert('🎉 ممتاااز! تم توصيل جميع الأرقام بنجاح 🏆'), 200);
+                setTimeout(() => alert('🎉 أحسنت يا بطل! لقد وصلت جميع الأرقام بنجاح 🏆'), 200);
             }
         } else {
+            const tempNum = matchNum.elem;
+            const tempShape = matchShape.elem;
+            matchNum = null;
+            matchShape = null;
             setTimeout(() => {
-                if (matchNum) matchNum.elem.classList.remove('selected');
-                if (matchShape) matchShape.elem.classList.remove('selected');
-                matchNum = null;
-                matchShape = null;
-                alert('❌ إجابة خاطئة، حاول مرة أخرى!');
-            }, 250);
+                tempNum.classList.remove('selected');
+                tempShape.classList.remove('selected');
+                alert('❌ إجابة غير صحيحة، حاول مرة أخرى!');
+            }, 200);
         }
     }
 }
@@ -116,7 +120,72 @@ function resetMatchingGame() {
 }
 
 // ==========================================
-// 4️⃣ جدول الضرب والإختبار
+// 4️⃣ البزل وتغيير الصور
+// ==========================================
+let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+let currentPuzzleImage = 'puzzle1.jpg';
+
+function changePuzzleImage(newImage) {
+    currentPuzzleImage = newImage;
+    initPuzzle();
+}
+
+function renderPuzzle() {
+    const board = document.getElementById('puzzle-board');
+    if (!board) return;
+    board.innerHTML = '';
+    
+    tiles.forEach((tile, index) => {
+        const tileDiv = document.createElement('div');
+        tileDiv.style.borderRadius = '6px';
+        tileDiv.style.cursor = tile !== "" ? 'pointer' : 'default';
+        tileDiv.style.userSelect = 'none';
+
+        if (tile === "") {
+            tileDiv.style.background = 'transparent';
+        } else {
+            const originalIndex = tile - 1;
+            const row = Math.floor(originalIndex / 3);
+            const col = originalIndex % 3;
+
+            tileDiv.style.backgroundImage = `url('${currentPuzzleImage}')`;
+            tileDiv.style.backgroundSize = '300px 300px';
+            tileDiv.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+            tileDiv.style.backgroundColor = '#ff6f61';
+            
+            tileDiv.onclick = () => moveTile(index);
+        }
+        board.appendChild(tileDiv);
+    });
+}
+
+function moveTile(index) {
+    const emptyIndex = tiles.indexOf("");
+    const validMoves = [index - 1, index + 1, index - 3, index + 3];
+
+    if (validMoves.includes(emptyIndex)) {
+        if ((index % 3 === 0 && emptyIndex === index - 1) || (index % 3 === 2 && emptyIndex === index + 1)) return;
+
+        tiles[emptyIndex] = tiles[index];
+        tiles[index] = "";
+        renderPuzzle();
+        checkWin();
+    }
+}
+
+function initPuzzle() {
+    tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
+    renderPuzzle();
+}
+
+function checkWin() {
+    if (tiles.join(',') === "1,2,3,4,5,6,7,8,") {
+        setTimeout(() => alert("🎉 أحسنت! لقد نجحت في تركيب الصورة! 🏆"), 200);
+    }
+}
+
+// ==========================================
+// 5️⃣ جدول الضرب والإختبار
 // ==========================================
 let currentNum1 = 0, currentNum2 = 0, score = 0;
 
@@ -167,55 +236,80 @@ function generateMultiplicationTable() {
 }
 
 // ==========================================
-// 5️⃣ البزل
+// 6️⃣ أدوات المرسم والتلوين
 // ==========================================
-let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+let isEraser = false;
+let canvasInitialized = false;
 
-function renderPuzzle() {
-    const board = document.getElementById('puzzle-board');
-    if (!board) return;
-    board.innerHTML = '';
+function initCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (!canvas) return;
     
-    tiles.forEach((tile, index) => {
-        const tileDiv = document.createElement('div');
-        tileDiv.style.borderRadius = '6px';
-        tileDiv.style.display = 'flex';
-        tileDiv.style.alignItems = 'center';
-        tileDiv.style.justifyContent = 'center';
-        tileDiv.style.fontSize = '1.5rem';
-        tileDiv.style.fontWeight = 'bold';
-        tileDiv.style.color = '#fff';
+    const ctx = canvas.getContext('2d');
+    let painting = false;
 
-        if (tile === "") {
-            tileDiv.style.background = 'transparent';
+    function startPosition(e) {
+        painting = true;
+        draw(e);
+    }
+
+    function finishedPosition() {
+        painting = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!painting) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        const brushSize = document.getElementById('brushSize') ? document.getElementById('brushSize').value : 10;
+        const colorPicker = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#ff0000';
+
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+
+        if (isEraser) {
+            ctx.strokeStyle = '#ffffff';
         } else {
-            tileDiv.style.backgroundColor = '#ff6f61';
-            tileDiv.innerText = tile;
-            tileDiv.onclick = () => moveTile(index);
+            ctx.strokeStyle = colorPicker;
         }
-        board.appendChild(tileDiv);
-    });
-}
 
-function moveTile(index) {
-    const emptyIndex = tiles.indexOf("");
-    const validMoves = [index - 1, index + 1, index - 3, index + 3];
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
 
-    if (validMoves.includes(emptyIndex)) {
-        if ((index % 3 === 0 && emptyIndex === index - 1) || (index % 3 === 2 && emptyIndex === index + 1)) return;
+    if (!canvasInitialized) {
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
 
-        tiles[emptyIndex] = tiles[index];
-        tiles[index] = "";
-        renderPuzzle();
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', finishedPosition);
+        canvas.addEventListener('touchmove', draw);
+        canvasInitialized = true;
     }
 }
 
-function initPuzzle() {
-    tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
-    renderPuzzle();
+function useEraser() { isEraser = true; }
+function usePencil() { isEraser = false; }
+function clearCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 // البدء عند التحميل
 document.addEventListener("DOMContentLoaded", () => {
     initArabicAlphabet();
+    initPuzzle();
 });
