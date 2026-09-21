@@ -27,40 +27,6 @@
             transform: scale(0.95);
             background: #bbdefb;
         }
-        .matching-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .matching-column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 45%;
-        }
-        .match-item {
-            padding: 12px;
-            border: 2px solid #ff9800;
-            border-radius: 10px;
-            background: #fff3e0;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            text-align: center;
-        }
-        .match-item.selected {
-            background: #ffe0b2;
-            border-color: #e65100;
-            transform: scale(1.03);
-        }
-        .match-item.matched {
-            background: #c8e6c9 !important;
-            border-color: #2e7d32 !important;
-            opacity: 0.8;
-            cursor: default;
-        }
     </style>
 </head>
 <body>
@@ -73,7 +39,6 @@
         <nav class="main-nav">
             <button class="nav-btn active" onclick="showSection('books', this)">📚 القصص</button>
             <button class="nav-btn" onclick="showSection('arabic', this)">🔤 الحروف العربية</button>
-            <button class="nav-btn" onclick="showSection('matching', this)">🔢 توصيل الأرقام</button>
             <button class="nav-btn" onclick="showSection('math', this)">✖️ جدول الضرب</button>
             <button class="nav-btn" onclick="showSection('puzzle', this)">🧩 البزل</button>
             <button class="nav-btn" onclick="showSection('events', this)">🎨 المرسم</button>
@@ -107,32 +72,6 @@
                 </div>
 
                 <div class="letters-grid" id="alphabetContainer"></div>
-            </div>
-        </section>
-
-        <!-- 🔢 توصيل الأرقام -->
-        <section id="matching" class="page-section" style="display: none;">
-            <h2 class="section-title">🔢 لعبة توصيل الأرقام والمدلول</h2>
-            <div style="background: #ffffff; padding: 20px; border-radius: 15px; max-width: 600px; margin: 0 auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                <p>اضغط على الرقم ثم اضغط على المجموعة المعبرة عنه لتوصيلهما! 🎯</p>
-
-                <div class="matching-container">
-                    <div class="matching-column" id="numbersColumn">
-                        <div class="match-item" data-val="1" onclick="handleMatchClick('num', 1, this)">١ (واحد)</div>
-                        <div class="match-item" data-val="2" onclick="handleMatchClick('num', 2, this)">٢ (اثنان)</div>
-                        <div class="match-item" data-val="3" onclick="handleMatchClick('num', 3, this)">٣ (ثلاثة)</div>
-                        <div class="match-item" data-val="4" onclick="handleMatchClick('num', 4, this)">٤ (أربعة)</div>
-                    </div>
-
-                    <div class="matching-column" id="shapesColumn">
-                        <div class="match-item" data-val="3" onclick="handleMatchClick('shape', 3, this)">⭐⭐⭐</div>
-                        <div class="match-item" data-val="1" onclick="handleMatchClick('shape', 1, this)">🎈</div>
-                        <div class="match-item" data-val="4" onclick="handleMatchClick('shape', 4, this)">🍎🍎🍎🍎</div>
-                        <div class="match-item" data-val="2" onclick="handleMatchClick('shape', 2, this)">🐱🐱</div>
-                    </div>
-                </div>
-
-                <button onclick="resetMatchingGame()" class="btn" style="background-color: #ff9800; margin-top: 20px;">🔄 إعادة التوصيل</button>
             </div>
         </section>
 
