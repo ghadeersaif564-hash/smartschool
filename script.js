@@ -66,61 +66,7 @@ function initArabicAlphabet() {
 }
 
 // ==========================================
-// 3️⃣ توصيل الأرقام (تفاعلي كامل)
-// ==========================================
-let matchNum = null;
-let matchShape = null;
-
-function handleMatchClick(type, val, elem) {
-    if (elem.classList.contains('matched')) return;
-
-    if (type === 'num') {
-        document.querySelectorAll('#numbersColumn .match-item').forEach(e => e.classList.remove('selected'));
-        elem.classList.add('selected');
-        matchNum = { val: val, elem: elem };
-    } else {
-        document.querySelectorAll('#shapesColumn .match-item').forEach(e => e.classList.remove('selected'));
-        elem.classList.add('selected');
-        matchShape = { val: val, elem: elem };
-    }
-
-    if (matchNum && matchShape) {
-        if (matchNum.val === matchShape.val) {
-            matchNum.elem.classList.remove('selected');
-            matchShape.elem.classList.remove('selected');
-            matchNum.elem.classList.add('matched');
-            matchShape.elem.classList.add('matched');
-            matchNum = null;
-            matchShape = null;
-
-            const totalMatched = document.querySelectorAll('.match-item.matched').length;
-            if (totalMatched === 8) {
-                setTimeout(() => alert('🎉 أحسنت يا بطل! لقد وصلت جميع الأرقام بنجاح 🏆'), 200);
-            }
-        } else {
-            const tempNum = matchNum.elem;
-            const tempShape = matchShape.elem;
-            matchNum = null;
-            matchShape = null;
-            setTimeout(() => {
-                tempNum.classList.remove('selected');
-                tempShape.classList.remove('selected');
-                alert('❌ إجابة غير صحيحة، حاول مرة أخرى!');
-            }, 200);
-        }
-    }
-}
-
-function resetMatchingGame() {
-    document.querySelectorAll('.match-item').forEach(e => {
-        e.classList.remove('selected', 'matched');
-    });
-    matchNum = null;
-    matchShape = null;
-}
-
-// ==========================================
-// 4️⃣ البزل وتغيير الصور
+// 3️⃣ البزل وتغيير الصور
 // ==========================================
 let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
 let currentPuzzleImage = 'puzzle1.jpg';
@@ -185,7 +131,7 @@ function checkWin() {
 }
 
 // ==========================================
-// 5️⃣ جدول الضرب والإختبار
+// 4️⃣ جدول الضرب والإختبار
 // ==========================================
 let currentNum1 = 0, currentNum2 = 0, score = 0;
 
@@ -236,7 +182,7 @@ function generateMultiplicationTable() {
 }
 
 // ==========================================
-// 6️⃣ أدوات المرسم والتلوين
+// 5️⃣ أدوات المرسم والتلوين
 // ==========================================
 let isEraser = false;
 let canvasInitialized = false;
