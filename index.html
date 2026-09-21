@@ -114,7 +114,7 @@
         <section id="matching" class="page-section" style="display: none;">
             <h2 class="section-title">🔢 لعبة توصيل الأرقام والمدلول</h2>
             <div style="background: #ffffff; padding: 20px; border-radius: 15px; max-width: 600px; margin: 0 auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                <p>اضغط على الرقم ثم اضغط على الشكل المماثل له! 🎯</p>
+                <p>اضغط على الرقم ثم اضغط على المجموعة المعبرة عنه لتوصيلهما! 🎯</p>
 
                 <div class="matching-container">
                     <div class="matching-column" id="numbersColumn">
@@ -160,6 +160,16 @@
         <section id="puzzle" class="page-section" style="display: none;">
             <h2 class="section-title">🧩 لعبة تركيب الصور (البزل)</h2>
             <div style="background: #ffffff; padding: 20px; border-radius: 15px; max-width: 500px; margin: 0 auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <p style="font-size: 0.95rem; color: #555; margin-bottom: 12px;">اختر الصورة ثم حرك القطع لترتيبها! 🎯</p>
+
+                <div style="margin-bottom: 15px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="changePuzzleImage('puzzle1.jpg')" class="btn" style="padding: 5px 8px; font-size: 0.8rem;">🖼️ صورة 1</button>
+                    <button onclick="changePuzzleImage('puzzle2.jpg')" class="btn" style="padding: 5px 8px; font-size: 0.8rem;">🖼️ صورة 2</button>
+                    <button onclick="changePuzzleImage('puzzle3.jpg')" class="btn" style="padding: 5px 8px; font-size: 0.8rem;">🖼️ صورة 3</button>
+                    <button onclick="changePuzzleImage('puzzle4.jpg')" class="btn" style="padding: 5px 8px; font-size: 0.8rem;">🖼️ صورة 4</button>
+                    <button onclick="changePuzzleImage('puzzle5.jpg')" class="btn" style="padding: 5px 8px; font-size: 0.8rem;">🖼️ صورة 5</button>
+                </div>
+
                 <div id="puzzle-board" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 300px; height: 300px; margin: 0 auto; background: #f0f0f0; border: 4px solid #ff6f61; border-radius: 12px; padding: 5px; box-sizing: border-box;"></div>
                 <button onclick="initPuzzle()" class="btn" style="background-color: #ff9800; margin-top: 15px;">🔄 إعادة الخلط</button>
             </div>
@@ -167,9 +177,23 @@
 
         <!-- 🎨 المرسم -->
         <section id="events" class="page-section" style="display: none;">
-            <h2 class="section-title">🎨 مرسم الأطفال</h2>
-            <div style="background: #ffffff; padding: 20px; border-radius: 15px; max-width: 600px; margin: 0 auto; text-align: center;">
-                <canvas id="paintCanvas" width="400" height="280" style="border: 3px dashed #ff6f61; border-radius: 10px; background-color: #ffffff; max-width: 100%;"></canvas>
+            <h2 class="section-title">🎨 مرسم الأطفال والتلوين التفاعلي</h2>
+            <div style="background: #ffffff; padding: 20px; border-radius: 15px; max-width: 600px; margin: 0 auto; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <h3>لون وارسم لوحتك الخاصة 🖌️</h3>
+                <div style="margin: 15px 0; display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                    <label style="font-size: 0.9rem;">اللون: <input type="color" id="colorPicker" value="#ff0000"></label>
+                    <label style="font-size: 0.9rem;">الفرشاة: 
+                        <select id="brushSize">
+                            <option value="5">صغير ✏️</option>
+                            <option value="10" selected>متوسط 🖌️</option>
+                            <option value="20">كبير 🖍️</option>
+                        </select>
+                    </label>
+                    <button onclick="useEraser()" class="btn" style="background-color: #ff9800; padding: 4px 8px; font-size: 0.85rem;">🧹 ممحاة</button>
+                    <button onclick="usePencil()" class="btn" style="background-color: #2196F3; padding: 4px 8px; font-size: 0.85rem;">✏️ قلم</button>
+                    <button onclick="clearCanvas()" class="btn" style="background-color: #f44336; padding: 4px 8px; font-size: 0.85rem;">🗑️ مسح</button>
+                </div>
+                <canvas id="paintCanvas" width="400" height="280" style="border: 3px dashed #ff6f61; border-radius: 10px; background-color: #ffffff; max-width: 100%; cursor: crosshair;"></canvas>
             </div>
         </section>
 
