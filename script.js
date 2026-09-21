@@ -2,12 +2,15 @@
 // 1️⃣ التنقل بين الأقسام
 // ==========================================
 function showSection(sectionId, element) {
+    // إخفاء جميع الأقسام
     const sections = document.querySelectorAll('.page-section');
     sections.forEach(sec => sec.style.display = 'none');
 
+    // إلغاء تفعيل جميع الأزرار
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
 
+    // إظهار القسم المطلوب وتفعيل الزر
     const activeSection = document.getElementById(sectionId);
     if (activeSection) {
         activeSection.style.display = 'block';
@@ -16,6 +19,7 @@ function showSection(sectionId, element) {
         element.classList.add('active');
     }
 
+    // تهيئة الألعاب بناءً على القسم المفتوح
     if (sectionId === 'arabic') {
         initArabicAlphabet();
     } else if (sectionId === 'math') {
@@ -29,7 +33,7 @@ function showSection(sectionId, element) {
 }
 
 // ==========================================
-// 2️⃣ الحروف العربية
+// 2️⃣ الحروف العربية التفاعلية
 // ==========================================
 const alphabetData = [
     { letter: 'أ', word: 'أ : أسد 🦁' }, { letter: 'ب', word: 'ب : بطة 🦆' },
@@ -138,12 +142,16 @@ let currentNum1 = 0, currentNum2 = 0, score = 0;
 function generateMathQuiz() {
     currentNum1 = Math.floor(Math.random() * 9) + 2;
     currentNum2 = Math.floor(Math.random() * 9) + 1;
-    document.getElementById('quizQuestion').innerText = `كم يساوي ${currentNum1} × ${currentNum2} ؟`;
-    document.getElementById('quizAnswer').value = '';
+    const quizQ = document.getElementById('quizQuestion');
+    const quizA = document.getElementById('quizAnswer');
+    if (quizQ) quizQ.innerText = `كم يساوي ${currentNum1} × ${currentNum2} ؟`;
+    if (quizA) quizA.value = '';
 }
 
 function checkMathAnswer() {
-    const inputVal = parseInt(document.getElementById('quizAnswer').value);
+    const quizA = document.getElementById('quizAnswer');
+    if (!quizA) return;
+    const inputVal = parseInt(quizA.value);
     const feedback = document.getElementById('quizFeedback');
     const correctVal = currentNum1 * currentNum2;
 
@@ -254,7 +262,7 @@ function clearCanvas() {
     }
 }
 
-// البدء عند التحميل
+// البدء عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
     initArabicAlphabet();
     initPuzzle();
