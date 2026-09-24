@@ -1,139 +1,289 @@
-/* ==========================================
-   التنسيقات العامة للموقع
-   ========================================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f8;
-    margin: 0;
-    padding: 0;
-    direction: rtl;
+
+// ==========================================
+// 1️⃣ التنقل بين الأقسام وإظهارها
+// ==========================================
+function showSection(sectionId, element) {
+    // إخفاء جميع الأقسام
+    const sections = document.querySelectorAll('.page-section');
+    sections.forEach(sec => {
+        sec.style.display = 'none';
+        sec.classList.remove('active');
+    });
+
+    // إلغاء تفعيل الأزرار
+    const buttons = document.querySelectorAll('.nav-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // إظهار القسم المطلوب وتفعيل الزر
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) {
+        activeSection.style.display = 'block';
+        activeSection.classList.add('active');
+    }
+    if (element) {
+        element.classList.add('active');
+    }
+
+    // تشغيل الألعاب الخاصة بكل قسم فور فتحه
+    if (sectionId === 'arabic') {
+        initArabicAlphabet();
+    } else if (sectionId === 'math') {
+        generateMathQuiz();
+        generateMultiplicationTable();
+    } else if (sectionId === 'puzzle') {
+        initPuzzle();
+    } else if (sectionId === 'events') {
+        setTimeout(initCanvas, 100);
+    }
 }
 
-.container {
-    max-width: 1100px;
-    margin: 20px auto;
-    padding: 0 15px;
+// ==========================================
+// 2️⃣ الحروف العربية
+// ==========================================
+const alphabetData = [
+    { letter: 'أ', word: 'أ : أسد 🦁' }, { letter: 'ب', word: 'ب : بطة 🦆' },
+    { letter: 'ت', word: 'ت : تفاحة 🍎' }, { letter: 'ث', word: 'ث : ثعلب 🦊' },
+    { letter: 'ج', word: 'ج : جمل 🐪' }, { letter: 'ح', word: 'ح : حصان 🐎' },
+    { letter: 'خ', word: 'خ : خروف 🐑' }, { letter: 'د', word: 'د : دب 🧸' },
+    { letter: 'ذ', word: 'ذ : ذئب 🐺' }, { letter: 'ر', word: 'ر : رمان 🍎' },
+    { letter: 'ز', word: 'ز : زرافة 🦒' }, { letter: 'س', word: 'س : سمكة 🐟' },
+    { letter: 'ش', word: 'ش : شمس ☀️' }, { letter: 'ص', word: 'ص : صقر 🦅' },
+    { letter: 'ض', word: 'ض : ضفدع 🐸' }, { letter: 'ط', word: 'ط : طائرة ✈️' },
+    { letter: 'ظ', word: 'ظ : ظرف ✉️' }, { letter: 'ع', word: 'ع : عين 👁️' },
+    { letter: 'غ', word: 'غ : غزال 🦌' }, { letter: 'ف', word: 'ف : فيل 🐘' },
+    { letter: 'ق', word: 'ق : قلم ✏️' }, { letter: 'ك', word: 'ك : كتاب 📖' },
+    { letter: 'ل', word: 'ل : ليمون 🍋' }, { letter: 'م', word: 'م : موز 🍌' },
+    { letter: 'ن', word: 'ن : نجمة 🌟' }, { letter: 'هـ', word: 'هـ : هلال 🌙' },
+    { letter: 'و', word: 'و : وردة 🌹' }, { letter: 'ي', word: 'ي : يد ✋' }
+];
+
+function initArabicAlphabet() {
+    const container = document.getElementById('alphabetContainer');
+    if (!container) return;
+    container.innerHTML = "";
+
+    alphabetData.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'letter-btn';
+        btn.style.cssText = "font-size:1.5rem; padding:10px 15px; margin:5px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer;";
+        btn.innerText = item.letter;
+        btn.onclick = function() {
+            document.getElementById('selectedLetter').innerText = item.letter;
+            document.getElementById('letterWord').innerText = item.word;
+        };
+        container.appendChild(btn);
+    });
 }
 
-/* ==========================================
-   تنسيق الهيدر والأزرار
-   ========================================== */
-header {
-    background: linear-gradient(135deg, #ff6f61, #de1a53);
-    color: white;
-    text-align: center;
-    padding: 20px 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+// ==========================================
+// 3️⃣ الرياضيات وتحدي جدول الضرب
+// ==========================================
+let currentNum1 = 0, currentNum2 = 0, score = 0;
+
+function generateMathQuiz() {
+    currentNum1 = Math.floor(Math.random() * 9) + 2;
+    currentNum2 = Math.floor(Math.random() * 9) + 1;
+    const quizQ = document.getElementById('quizQuestion');
+    const quizA = document.getElementById('quizAnswer');
+    if (quizQ) quizQ.innerText = `كم يساوي ${currentNum1} × ${currentNum2} ؟`;
+    if (quizA) quizA.value = '';
 }
 
-.school-name {
-    margin: 0 0 15px 0;
-    font-size: 2rem;
+function checkMathAnswer() {
+    const quizA = document.getElementById('quizAnswer');
+    if (!quizA) return;
+    const inputVal = parseInt(quizA.value);
+    const feedback = document.getElementById('quizFeedback');
+    const correctVal = currentNum1 * currentNum2;
+
+    if (inputVal === correctVal) {
+        if (feedback) {
+            feedback.style.color = '#4CAF50';
+            feedback.innerText = '🎉 إجابة صحيحة! بطل 🌟';
+        }
+        score += 10;
+        const scoreDisp = document.getElementById('scoreDisplay');
+        if (scoreDisp) scoreDisp.innerText = score;
+        setTimeout(() => {
+            if (feedback) feedback.innerText = '';
+            generateMathQuiz();
+        }, 1200);
+    } else {
+        if (feedback) {
+            feedback.style.color = '#f44336';
+            feedback.innerText = `❌ إجابة خاطئة! الناتج الصحيح هو ${correctVal}`;
+        }
+    }
 }
 
-.main-nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+function generateMultiplicationTable() {
+    const table = document.getElementById('multiplicationTable');
+    if (!table) return;
+
+    let html = '<tr style="background: #2196F3; color: white;"><th style="padding: 8px;">×</th>';
+    for (let i = 1; i <= 10; i++) html += `<th style="padding: 8px;">${i}</th>`;
+    html += '</tr>';
+
+    for (let i = 1; i <= 10; i++) {
+        html += `<tr><th style="background: #2196F3; color: white; padding: 8px;">${i}</th>`;
+        for (let j = 1; j <= 10; j++) {
+            const bg = (i * j) % 2 === 0 ? '#f9f9f9' : '#ffffff';
+            html += `<td style="padding: 8px; border: 1px solid #ddd; background: ${bg};">${i * j}</td>`;
+        }
+        html += '</tr>';
+    }
+    table.innerHTML = html;
 }
 
-.nav-btn {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 2px solid white;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
+// ==========================================
+// 4️⃣ لعبة البزل
+// ==========================================
+let tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+let currentPuzzleImage = 'puzzle1.jpg';
+
+function changePuzzleImage(newImage) {
+    currentPuzzleImage = newImage;
+    initPuzzle();
 }
 
-.nav-btn:hover, .nav-btn.active {
-    background-color: white;
-    color: #de1a53;
-}
-
-.section-title {
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-}
-
-/* ==========================================
-   🎯 الحل الرئيسي: ترتيب القصص أفقياً (Flexbox)
-   ========================================== */
-.grid {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: stretch !important;
-    gap: 25px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-/* 🎴 تنسيق كرت القصة */
-.card {
-    background: #ffffff !important;
-    border-radius: 18px !important;
-    padding: 25px 20px !important;
-    text-align: center !important;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+function renderPuzzle() {
+    const board = document.getElementById('puzzle-board');
+    if (!board) return;
+    board.innerHTML = '';
     
-    /* جعل كل كرت بعرض 280 بكسل حتى تتصف بجانب بعضها */
-    width: 280px !important;
-    max-width: 100% !important;
+    tiles.forEach((tile, index) => {
+        const tileDiv = document.createElement('div');
+        tileDiv.style.borderRadius = '6px';
+        tileDiv.style.cursor = tile !== "" ? 'pointer' : 'default';
+        tileDiv.style.userSelect = 'none';
+        tileDiv.style.display = 'flex';
+        tileDiv.style.alignItems = 'center';
+        tileDiv.style.justifyContent = 'center';
+        tileDiv.style.fontSize = '1.5rem';
+        tileDiv.style.fontWeight = 'bold';
+
+        if (tile === "") {
+            tileDiv.style.background = '#eee';
+        } else {
+            const originalIndex = tile - 1;
+            const row = Math.floor(originalIndex / 3);
+            const col = originalIndex % 3;
+
+            tileDiv.style.backgroundImage = `url('${currentPuzzleImage}')`;
+            tileDiv.style.backgroundSize = '300px 300px';
+            tileDiv.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+            tileDiv.style.backgroundColor = '#ff6f61';
+            tileDiv.style.color = '#fff';
+            tileDiv.innerText = tile; // يعرض الرقم في حال عدم وجود الصورة
+            
+            tileDiv.onclick = () => moveTile(index);
+        }
+        board.appendChild(tileDiv);
+    });
+}
+
+function moveTile(index) {
+    const emptyIndex = tiles.indexOf("");
+    const validMoves = [index - 1, index + 1, index - 3, index + 3];
+
+    if (validMoves.includes(emptyIndex)) {
+        if ((index % 3 === 0 && emptyIndex === index - 1) || (index % 3 === 2 && emptyIndex === index + 1)) return;
+
+        tiles[emptyIndex] = tiles[index];
+        tiles[index] = "";
+        renderPuzzle();
+        checkWin();
+    }
+}
+
+function initPuzzle() {
+    tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""].sort(() => Math.random() - 0.5);
+    renderPuzzle();
+}
+
+function checkWin() {
+    if (tiles.join(',') === "1,2,3,4,5,6,7,8,") {
+        setTimeout(() => alert("🎉 أحسنت! لقد نجحت في تركيب الصورة! 🏆"), 200);
+    }
+}
+
+// ==========================================
+// 5️⃣ المرسم والتلوين
+// ==========================================
+let isEraser = false;
+let canvasInitialized = false;
+
+function initCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (!canvas) return;
     
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    border: 2px solid #eef2f5 !important;
-    box-sizing: border-box !important;
+    const ctx = canvas.getContext('2d');
+    let painting = false;
+
+    function startPosition(e) {
+        painting = true;
+        draw(e);
+    }
+
+    function finishedPosition() {
+        painting = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!painting) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        const brushSize = document.getElementById('brushSize') ? document.getElementById('brushSize').value : 10;
+        const colorPicker = document.getElementById('colorPicker') ? document.getElementById('colorPicker').value : '#ff0000';
+
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+
+        if (isEraser) {
+            ctx.strokeStyle = '#ffffff';
+        } else {
+            ctx.strokeStyle = colorPicker;
+        }
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+
+    if (!canvasInitialized) {
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', finishedPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', finishedPosition);
+        canvas.addEventListener('touchmove', draw);
+        canvasInitialized = true;
+    }
 }
 
-.card:hover {
-    transform: translateY(-6px) !important;
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
-    border-color: #ff6f61 !important;
+function useEraser() { isEraser = true; }
+function usePencil() { isEraser = false; }
+function clearCanvas() {
+    const canvas = document.getElementById('paintCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
-.card-icon {
-    font-size: 3.5rem;
-    margin-bottom: 15px;
-}
-
-.card h3 {
-    color: #2c3e50;
-    margin: 10px 0;
-    font-size: 1.3rem;
-}
-
-.card p {
-    color: #666;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-/* 🔘 زر القراءة والتحميل */
-.btn {
-    display: inline-block;
-    background-color: #ffc107;
-    color: #333;
-    padding: 10px 22px;
-    text-decoration: none;
-    border-radius: 25px;
-    font-weight: bold;
-    transition: background 0.3s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.btn:hover {
-    background-color: #e0a800;
-}
+// تشغيل تلقائي عند التحميل
+document.addEventListener("DOMContentLoaded", () => {
+    initArabicAlphabet();
+    initPuzzle();
+    generateMathQuiz();
+    generateMultiplicationTable();
+});
